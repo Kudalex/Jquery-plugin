@@ -1,0 +1,79 @@
+  .klevis-color-danger{
+    color: red !important
+  }
+  .klevis-color-success{
+    color: green !important
+  }
+  .klevis-input-content{
+    /*padding: 8px;*/
+  }
+  
+  .klevis-input--div{
+    display: flex;
+    border: none;
+    background: white;
+    border-bottom: 1px solid grey;
+    transition:0.7s ease all; 
+    -moz-transition:0.7s ease all; 
+    -webkit-transition:0.7s ease all;
+  }
+
+  .klevis-input-label{
+      cursor: pointer;
+      color:grey; 
+      font-weight:normal;
+      transition:0.7s ease all; 
+      -moz-transition:0.7s ease all; 
+      -webkit-transition:0.7s ease all;
+  }
+  .klevis-input{
+    padding: 6px;
+    display: block;
+    border: none;
+    flex-grow: 1;
+    transition:0.7s ease all; 
+    -moz-transition:0.7s ease all; 
+    -webkit-transition:0.7s ease all;
+  } 
+
+  .klevis-input:focus{ 
+    outline:none;
+  }
+
+  .klevis-input:hover { 
+    outline:none;
+    background: #f1f1f191;
+  }
+
+  .klevis-input-activate { 
+    outline:none;
+    background: #f1f1f191 !important;
+  }
+
+  .klevis-input-image-control{    
+    width: 20px;
+    height: 20px;    
+    position: relative;
+    top: 3px;
+  }
+
+  .klevis-input-image-visible{
+    width: 20px;
+    height: 20px;    
+    position: relative;
+    left: -5px;
+    top: 3px;
+    cursor: pointer;
+  }
+
+  .klevis-input-valid-success{
+    border-color: green;
+  }
+
+  .klevis-input-valid{
+    border-color: red;
+  } 
+  .klevis-input-valid-text{
+    color: #ff3e3e;
+    font-size: 13px;
+  }
