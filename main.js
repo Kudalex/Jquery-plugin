@@ -189,11 +189,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
 	//https://myjson.com
 	$('.testSelectList1').klevisSelectList({
-		label: 'test Select list 1',
+		//label: '',
 		textField: 'name',
 		valueField: 'abbreviation',
 		autoRead: false,
-		filter: "start",
+		filter: true,
 		//textField: 'text',
 		//valueField: 'value',
 		source: {
@@ -220,7 +220,7 @@ document.addEventListener('DOMContentLoaded', function () {
 			}
 		},
 		change(options){
-			console.log(options);
+			//console.log(options);
 		}
 
 	})

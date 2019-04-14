@@ -113,15 +113,19 @@
         read(){
 
             const that = this;
+            return new Promise( (resolve, reject) => {
 
-            this.core.htmlElements.loading();
-
-            if (this.transport){
-                that.transport(that);
-            } else {
-                this.core.htmlElements.waiting();
-                this.core._initList();
-            }
+                this.core.htmlElements.loading();
+    
+                if (this.transport){
+                    that.transport(that);
+                    resolve();
+                } else {
+                    this.core.htmlElements.waiting();
+                    this.core._initList();
+                    resolve();
+                }
+            })
 
         }
 
@@ -249,6 +253,22 @@
             return this.element.find('.klevis-select-list-image-control')[0];
         }
 
+        get filter(){
+            return this.element.find('.klevis-select-list--filter');
+        }
+
+        get filterInput(){
+            return this.element.find('.klevis-select-list--filter').data('klevisInput');
+        }
+
+        get menuItem(){
+            return this.element.find('.klevis-select-list--menu-item');
+        }
+
+        get itemSelected(){
+            return this.element.find('.klevis-select-list--selected')[0];
+        }
+
         loading(){
             this.imageControl.classList.add('klevis-select-list-read');
             this.imageControl.src = 'klevisSelectList/img/loading.png';
@@ -277,7 +297,7 @@
                 </div>
             `)
             .wrapInner(`
-                <div class = "klevis-select-list-content" >
+                <div class = "klevis-select-list-content" tabindex="0" >
             `)
         }
 
@@ -304,6 +324,24 @@
             this._text;
             this._value;
             this._countOpen = 0;
+            this._selected;
+            this._mouseDown = false;
+            this._length = 0;
+            
+            this.keyCode = {
+				enter: 13,
+				tab: 9,
+                escape: 27,
+                up: 38,
+				left: 37,
+                right: 39,
+                down: 40,
+				zero: 48,
+				nine: 57,
+				num0: 96,
+                num9: 105,
+                f: 70,
+            };
 
             this._init()
         }
@@ -330,6 +368,29 @@
 
             this.refresh(); 
 
+            this.htmlElements.selectListContent[0].addEventListener('mousedown', () => {
+                that._mouseDown = true;
+            });
+  
+            this.htmlElements.selectListContent[0].addEventListener('mouseup', () => {
+                that._mouseDown = false;
+            });
+
+            this.htmlElements.selectListContent[0].addEventListener('focus', e => {
+
+                if (!that._mouseDown){
+                    
+                    if (that.state == 'close'){
+                        that._countOpen++;
+    
+                        that.open();
+                    }
+
+                }
+
+            })
+
+
             $(document).click(function(event) { 
                 let $target = $(event.target);
 
@@ -346,9 +407,9 @@
                             that.open();
                         }
 
-                        if ($target.closest(`.klevis-select-list--menu span`).length){
+                        if ($target.closest(`.klevis-select-list--menu-item`).length){
 
-                            that.dataItem = $target["0"].getAttribute('data-index');
+                            that.value = $target["0"].getAttribute('value');
                         }
 
                     }
@@ -358,10 +419,42 @@
                     
                     if (that.state == 'open'){
                         that.close();
-                    } 
+                    }
                 }
 
             });
+
+            //keys to content
+            this.htmlElements.selectListContent.bind('keydown', e => {
+                
+                if (that.length){
+                    
+                    if (e.keyCode === that.keyCode.down || e.keyCode === that.keyCode.right){
+                        if (!that.dataItem){
+                            that.value = that.dataSource.filterItems[0][that.dataSource.valueField];
+                        } else {
+                            if (that.selected + 1 < that._length){
+                                that.dataItem = that.selected * 1 + 1;
+                            }
+                        }
+                        
+                    } else if (e.keyCode === that.keyCode.up || e.keyCode === that.keyCode.left){
+
+                        if (!that.dataItem){
+                            that.value = that.dataSource.filterItems[0][that.dataSource.valueField];
+                        } else {
+                            if (that.selected >= 1){
+                                that.dataItem = that.selected * 1 - 1;
+                            }
+                        }
+                    }
+
+                }
+
+                if (e.keyCode === that.keyCode.escape || e.keyCode === that.keyCode.enter){
+                    that.close();
+                }
+            })
 
         }
 
@@ -422,22 +515,28 @@
             const that = this;
 
             this.dataSource.total = this.dataSource.items.length;
+            this.dataSource.filterItems = this.dataSource.items;
+            this._length = this.dataSource.total;
 
             if (this.dataSource.filter){
-                let elementFilter = `<span class = 'klevis-select-list--filter'></span>`
-                that.htmlElements.list.prepend(elementFilter);
+                if (!this.htmlElements.filter.length){
+                    let elementFilter = `<span class = 'klevis-select-list--filter'></span>`
+                    that.htmlElements.list.prepend(elementFilter);
 
-                $('.klevis-select-list--filter').klevisInput({
-                    imageControl: `klevisSelectList/img/search.png`,
-                    change(options){
-                        that._filterItems(options.inputValue);
-                    }
-                });
+                    $('.klevis-select-list--filter').klevisInput({
+                        imageControl: `klevisSelectList/img/search.png`,
+                        change(options){
+                            that._filterItems(options.inputValue);
+                        }
+                    });
+                }
             }
 
-            let createList = new Promise(function(resolve, reject) {
+            let createList = new Promise((resolve, reject) => {
+                that.clear();
+                that.htmlElements.menuItem.remove()
                 that.dataSource.items.map((item, index) => {
-                    let elementList = `<span data-index = ${index} value = '${item[that.dataSource.valueField]}' >${item[that.dataSource.textField]}</span>`;
+                    let elementList = `<span data-index = ${index} value = '${item[that.dataSource.valueField]}' class = 'klevis-select-list--menu-item'>${item[that.dataSource.textField]}</span>`;
                     that.htmlElements.listItems.append(elementList);
                 })
                 resolve()
@@ -451,32 +550,39 @@
                 if (that.htmlElements.menu.offsetHeight > 200){
                     that.htmlElements.menu.classList.add('klevis-select-list--menu-scroll');
                 }
+                that.filterFocus();
             });
             
         }
         
         _findIndexItemByValue(value){
-            return this.dataSource.items.findIndex(item => item[this.dataSource.valueField] === value);
+            return this.dataSource.filterItems.findIndex(item => item[this.dataSource.valueField] === value);
         }
 
         _findIndexItemByText(value){
             //return this.dataSource.items.filter(item => { return item[this.dataSource.textField] == value; });
-            return this.dataSource.items.filter(item => Object.keys(item).some(key => item[key].includes(value)));
+            return this.dataSource.items.filter(item => Object.keys(item).some(key => item[key].toLowerCase().includes(value.toLowerCase())));
         }
 
         _filterItems(value){
 
             const that = this;
             this.dataSource.filterItems = this._findIndexItemByText(value);
-            
-            if (this.dataSource.filterItems.length > 0){
+           
+            if (this.dataSource.filterItems.length >= 0){
+                
+                this._length = this.dataSource.filterItems.length;
+                this._selected = -1;
                 this.htmlElements.listItems.empty();
+
                 let createList = new Promise(function(resolve, reject) {
+
                     that.dataSource.filterItems.map((item, index) => {
-                        let elementList = `<span data-index = ${index} value = '${item[that.dataSource.valueField]}' >${item[that.dataSource.textField]}</span>`;
+                        let elementList = `<span data-index = ${index} value = '${item[that.dataSource.valueField]}' class = 'klevis-select-list--menu-item'>${item[that.dataSource.textField]}</span>`;
                         that.htmlElements.listItems.append(elementList);
                     })
                     resolve()
+                
                 })
                 createList.then(value => {
     
@@ -487,6 +593,7 @@
                     if (that.htmlElements.menu.offsetHeight > 200){
                         that.htmlElements.menu.classList.add('klevis-select-list--menu-scroll');
                     }
+                    
                 });
             }
         }
@@ -517,17 +624,30 @@
             return this._value;
         }
 
+        set filterValue(value){
+            this.htmlElements.filterInput.inputValue = value;
+        }
+
+        get filterValue(){
+            return this.htmlElements.filterInput.inputValue;
+        }
+        
         set dataItem(index){
             
-            if (index){
+            if (index.toString()){
 
                 const that = this;
-    
+                that._selected = index;
+
                 if (this.dataItem){
-                    this.htmlElements.list.find(`[data-index = ${this.index}]`)[0].classList.remove(`klevis-select-list--selected`);
+                    try {
+                        this.htmlElements.list.find(`[data-index = ${this.index}]`)[0].classList.remove(`klevis-select-list--selected`);
+                    } catch (error) {
+                        null;
+                    }
                 }
     
-                this._dataItem = this.dataSource.items[index];
+                this._dataItem = this.dataSource.filterItems[index];
     
                 this.index = index;
                 this.text = this.dataItem[this.dataSource.textField];
@@ -537,39 +657,68 @@
                     that.dataSource.change(that);
                 }    
                 
-    
                 this.htmlElements.list.find(`[data-index = ${this.index}]`)[0].classList.add(`klevis-select-list--selected`);
-
+                setTimeout(() => {
+                    that.htmlElements.itemSelected.scrollIntoView({block: "center", behavior: "smooth"});
+                }, 0);
             }
         }
 
         get dataItem(){
+        
             return this._dataItem;
+        
         }
 
+        get selected(){
+             return this._selected;
+        }
+
+        get length(){
+            return this._length;
+        }
 
         open(){
+
+            const that = this;
+
             this.htmlElements.menu.classList.remove('klevis-select-list--close');
             this.htmlElements.menu.classList.add('klevis-select-list--open');
             this.state = 'open';
             this.htmlElements.imageArrow.src = 'klevisSelectList/img/arrow-up.png';
-            
+
             if (this._countOpen == 1 && !this.dataSource.autoRead){
                 this.dataSource.read();
+            } else if (this.dataSource.filter){
+               that.filterFocus();
             }
+
         }
 
         close(){
+
             this.htmlElements.menu.classList.remove('klevis-select-list--open');
             this.htmlElements.menu.classList.add('klevis-select-list--close');
             this.state = 'close';
             this.htmlElements.imageArrow.src = 'klevisSelectList/img/arrow-down.png';
+        
         }
 
         refresh(){
 
             this._initLabel();
    
+        }
+
+        clear(){
+            this._dataItem = null;
+            this.text = '';
+            this._value = '';
+            this.filterValue = '';
+        }
+
+        filterFocus(){
+            this.htmlElements.filterInput.focus();
         }
 
     }

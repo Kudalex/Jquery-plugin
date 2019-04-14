@@ -491,7 +491,10 @@
                     }
                 })
             }
+        }
 
+        focus(){
+            this.htmlElements.input.focus({preventScroll:true});
         }
     }
 
