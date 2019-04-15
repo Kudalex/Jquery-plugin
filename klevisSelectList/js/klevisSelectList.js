@@ -550,7 +550,10 @@
                 if (that.htmlElements.menu.offsetHeight > 200){
                     that.htmlElements.menu.classList.add('klevis-select-list--menu-scroll');
                 }
-                that.filterFocus();
+                
+                if (that.dataSource.filter){
+                    that.filterFocus();
+                }
             });
             
         }
@@ -714,7 +717,9 @@
             this._dataItem = null;
             this.text = '';
             this._value = '';
-            this.filterValue = '';
+            if (this.dataSource.filter){
+                this.filterValue = '';
+            }
         }
 
         filterFocus(){
