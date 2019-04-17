@@ -286,11 +286,11 @@
                 this.labelHtml = this.dataSource.default.label
             }
         }
-        set inputValue(value){
+        set val(value){
             this.htmlElements.input.value = value;
         }
 
-        get inputValue(){
+        get val(){
             return this.htmlElements.input.value;
         }
 
@@ -368,9 +368,9 @@
 
             //value
             if (this.dataSource.value){
-                this.inputValue = this.dataSource.value;
+                this.val = this.dataSource.value;
             } else {
-                this.inputValue = '';
+                this.val = '';
             }
 
             
@@ -464,7 +464,7 @@
                         that.dataSource.change(that);
                     }
 
-                    if (that.inputValue){
+                    if (that.val){
                         if (this.dataSource.changeImageControl){
                             that.imageControl = 'klevisInput/img/success.png';
                         }

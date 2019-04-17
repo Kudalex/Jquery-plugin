@@ -114,9 +114,8 @@
 
             const that = this;
             return new Promise( (resolve, reject) => {
-
                 this.core.htmlElements.loading();
-    
+                
                 if (this.transport){
                     that.transport(that);
                     resolve();
@@ -175,6 +174,14 @@
 
         get beforeOpen(){
             return this.data.beforeOpen;
+        }
+        
+        set nullOption(value){
+            this.data.nullOption = value;
+        }
+
+        get nullOption(){
+            return this.data.nullOption;
         }
         
         set change(value){
@@ -515,6 +522,7 @@
             const that = this;
 
             this.dataSource.total = this.dataSource.items.length;
+
             this.dataSource.filterItems = this.dataSource.items;
             this._length = this.dataSource.total;
 
@@ -526,7 +534,7 @@
                     $('.klevis-select-list--filter').klevisInput({
                         imageControl: `klevisSelectList/img/search.png`,
                         change(options){
-                            that._filterItems(options.inputValue);
+                            that._filterItems(options.val);
                         }
                     });
                 }
@@ -535,6 +543,11 @@
             let createList = new Promise((resolve, reject) => {
                 that.clear();
                 that.htmlElements.menuItem.remove()
+                
+                if (that.dataSource.nullOption){
+                    that.htmlElements.listItems.append(`<span data-index = -1 value = ' ' class = 'klevis-select-list--menu-item'>&nbsp;</span>`);
+                }
+
                 that.dataSource.items.map((item, index) => {
                     let elementList = `<span data-index = ${index} value = '${item[that.dataSource.valueField]}' class = 'klevis-select-list--menu-item'>${item[that.dataSource.textField]}</span>`;
                     that.htmlElements.listItems.append(elementList);
@@ -580,10 +593,16 @@
 
                 let createList = new Promise(function(resolve, reject) {
 
+                    if (that.dataSource.nullOption){
+                        that.htmlElements.listItems.append(`<span data-index = -1 value = ' ' class = 'klevis-select-list--menu-item'>&nbsp;</span>`);
+                    }
+
                     that.dataSource.filterItems.map((item, index) => {
                         let elementList = `<span data-index = ${index} value = '${item[that.dataSource.valueField]}' class = 'klevis-select-list--menu-item'>${item[that.dataSource.textField]}</span>`;
                         that.htmlElements.listItems.append(elementList);
                     })
+                    
+
                     resolve()
                 
                 })
@@ -628,11 +647,11 @@
         }
 
         set filterValue(value){
-            this.htmlElements.filterInput.inputValue = value;
+            this.htmlElements.filterInput.val = value;
         }
 
         get filterValue(){
-            return this.htmlElements.filterInput.inputValue;
+            return this.htmlElements.filterInput.val;
         }
         
         set dataItem(index){
@@ -649,12 +668,21 @@
                         null;
                     }
                 }
+
+                if (that.index == -1){
+                    this.htmlElements.list.find(`[data-index = ${this.index}]`)[0].classList.remove(`klevis-select-list--selected`);
+                }
     
                 this._dataItem = this.dataSource.filterItems[index];
     
                 this.index = index;
-                this.text = this.dataItem[this.dataSource.textField];
-                this._value = this.dataItem[this.dataSource.valueField];
+                if (this.index != -1){
+                    this.text = this.dataItem[this.dataSource.textField];
+                    this._value = this.dataItem[this.dataSource.valueField];
+                } else {
+                    this.text = '';
+                    this._value = '';
+                }
     
                 if (this.dataSource.change){
                     that.dataSource.change(that);

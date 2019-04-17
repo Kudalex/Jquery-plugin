@@ -121,7 +121,7 @@ document.addEventListener('DOMContentLoaded', function () {
 		
 		validOptions: (options) => {
 
-			if (!options.inputValue){
+			if (!options.val){
 		
 				options.required = true;
 				options.validText = {
@@ -130,7 +130,7 @@ document.addEventListener('DOMContentLoaded', function () {
 					'en': 'Required field'
 				};
 
-			} else if (options.inputValue.length < 5){
+			} else if (options.val.length < 5){
 		
 				options.required = true;
 				options.validText = 'you must have at least 5 characters'
@@ -159,7 +159,7 @@ document.addEventListener('DOMContentLoaded', function () {
 		lang: 'eng',
 		
 		validOptions: (options) => {
-			if (!options.inputValue){
+			if (!options.val){
 				options.required = true;
 			} else {
 				options.required = false;
@@ -177,7 +177,7 @@ document.addEventListener('DOMContentLoaded', function () {
 	$('#testInput4').klevisInput({
 		imageControl: `/img/2.jpg`,
 		change: (options) => {
-			console.log(options.inputValue)
+			console.log(options.val)
 		},
 	})
 
@@ -192,6 +192,7 @@ document.addEventListener('DOMContentLoaded', function () {
 		//label: '',
 		textField: 'name',
 		valueField: 'abbreviation',
+		nullOption: true,
 		autoRead: false,
 		filter: true,
 		//textField: 'text',
@@ -220,7 +221,8 @@ document.addEventListener('DOMContentLoaded', function () {
 			}
 		},
 		change(options){
-			//console.log(options);
+			$('#testInput5').data('klevisInput').val = options.value
+			console.log(options.value);
 		}
 
 	})
