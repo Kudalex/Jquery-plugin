@@ -1,3 +1,23 @@
+  .klevis-select-list-valid{
+    border-color: red !important;
+  } 
+
+  .klevis-select-list-label-valid{
+    color: red !important;
+  } 
+
+  .klevis-select-list-valid--div-text{
+    color: #ff3e3e !important;
+    font-size: 13px;
+  }
+
+  .klevis-select-list-success{
+    border-color: green !important;
+  } 
+  .klevis-select-list-label-success{
+    color: green !important;
+  } 
+
 
   .klevis-select-list-content{
     outline: none;
@@ -14,6 +34,7 @@
     background: white;
     position: relative;
     z-index: 100;
+    margin-top: 3px;
   }
   
   

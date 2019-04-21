@@ -189,12 +189,24 @@ document.addEventListener('DOMContentLoaded', function () {
 
 	//https://myjson.com
 	$('.testSelectList1').klevisSelectList({
-		//label: '',
+		label: 'Select',
 		textField: 'name',
 		valueField: 'abbreviation',
 		nullOption: true,
 		autoRead: false,
 		filter: true,
+		validOptions: (options) => {
+			//console.log(options.value);
+			if (!options.value){
+				options.required = true;
+				options.validText = {
+					'ru': 'Обов’язкове поле',
+					'eng': 'Required field'
+				};
+			} else {
+				options.required = false;
+			}
+		},
 		//textField: 'text',
 		//valueField: 'value',
 		source: {
@@ -222,7 +234,7 @@ document.addEventListener('DOMContentLoaded', function () {
 		},
 		change(options){
 			$('#testInput5').data('klevisInput').val = options.value
-			console.log(options.value);
+			//console.log(options.value);
 		}
 
 	})

@@ -199,6 +199,34 @@
         get validOptions(){
             return this.data.validOptions;
         }
+
+        set imageControl(value){
+            this.data.imageControl = value;
+        }
+
+        get imageControl(){
+                return this.data.imageControl;
+        }
+
+        set changeImageControl(value){
+            this.data.changeImageControl = value;
+        }
+
+        get changeImageControl(){
+            return this.data.changeImageControl;
+        }
+
+        set displayImageControl(value){
+            this.data.displayImageControl = value;
+        }
+
+        get displayImageControl(){
+            if (this.data.displayImageControl || this.data.displayImageControl === false){
+                return this.data.displayImageControl;
+            } else {
+                return this.default.displayImageControl;
+            }
+        }
     }
 
     class htmlElements{
@@ -220,6 +248,10 @@
             return this.element.find('.klevis-select-list')[0];
         }
         
+        get selectListDiv(){
+            return this.element.find('.klevis-select-list--div')[0];
+        }
+
         get selectListItem(){
             return this.element.find('.klevis-select-list--item')[0];
         }
@@ -241,11 +273,11 @@
         }
 
         get valid(){
-            return this.element.find('.klevis-select-list-valid')[0];
+            return this.element.find('.klevis-select-list-valid--div')[0];
         }
 
         get validText(){
-            return this.element.find('.klevis-select-list-valid-text')[0];
+            return this.element.find('.klevis-select-list-valid--div-text')[0];
         }
 
         get imageContent(){
@@ -283,7 +315,6 @@
 
         waiting(){
             this.imageControl.classList.remove('klevis-select-list-read');
-            this.imageControl.src = 'klevisSelectList/img/waiting.png';
         }
 
         createSelectList(){
@@ -296,7 +327,7 @@
                     </div>
                     <div class = 'klevis-select-list-image-content'>
                         <img class = 'klevis-select-list-image-arrow' src = 'klevisSelectList/img/arrow-down.png'>
-                        <img class = 'klevis-select-list-image-control' src = 'klevisSelectList/img/waiting.png'>
+                        <img class = 'klevis-select-list-image-control'>
                     </div>
                 </div>
                 <div class = 'klevis-select-list--menu klevis-select-list--close' >
@@ -309,7 +340,7 @@
         }
 
         destroyRequired(){
-            this.element.find('.klevis-select-list-valid').remove();
+            this.element.find('.klevis-select-list-valid--div').remove();
         }
     }
 
@@ -360,6 +391,16 @@
 
             this.htmlElements.createSelectList();
 
+            if (this.dataSource.imageControl){
+                this.imageControl = this.dataSource.imageControl;
+            } else {
+                this.imageControl = 'klevisSelectList/img/waiting.png';
+            }
+
+            if (!this.dataSource.displayImageControl){
+                
+                this.htmlElements.imageControl.remove();
+            }
 
             if (this.dataSource.beforeOpen){
                 const beforeOpen = this.dataSource.beforeOpen;
@@ -450,8 +491,14 @@
                         if (!that.dataItem){
                             that.value = that.dataSource.filterItems[0][that.dataSource.valueField];
                         } else {
-                            if (that.selected >= 1){
-                                that.dataItem = that.selected * 1 - 1;
+                            if (that.dataSource.nullOption){
+                                if (that.selected >= 0){
+                                    that.dataItem = that.selected * 1 - 1;
+                                }
+                            } else {
+                                if (that.selected >= 1){
+                                    that.dataItem = that.selected * 1 - 1;
+                                }
                             }
                         }
                     }
@@ -567,6 +614,12 @@
                 if (that.dataSource.filter){
                     that.filterFocus();
                 }
+                
+                if (this.dataSource.imageControl){
+                    this.imageControl = this.dataSource.imageControl;
+                } else {
+                    this.imageControl = 'klevisSelectList/img/waiting.png';
+                }
             });
             
         }
@@ -620,6 +673,16 @@
             }
         }
 
+        set imageControl(value){
+            if (this.dataSource.displayImageControl){
+                this.htmlElements.imageControl.src = value;
+            }
+        }
+
+        get imageControl(){
+            return this.htmlElements.imageControl.src;
+        }
+
         set index(value){
             this._index = value;
         }
@@ -644,6 +707,30 @@
 
         get value(){
             return this._value;
+        }
+
+        set required(value){
+            this.dataSource.required = value;
+        }
+
+        get required(){
+            return this.dataSource.required;
+        }
+
+        set validTextHtml(value){
+            this.htmlElements.validText.innerHTML = value;
+        }
+
+        get validTextHtml(){
+            return this.htmlElements.validText.innerHTML;
+        }
+
+        set validText(value){
+            this.dataSource.validText = value;
+        }
+
+        get validText(){
+            return this.dataSource.validText;
         }
 
         set filterValue(value){
@@ -674,7 +761,7 @@
                 }
     
                 this._dataItem = this.dataSource.filterItems[index];
-    
+
                 this.index = index;
                 if (this.index != -1){
                     this.text = this.dataItem[this.dataSource.textField];
@@ -688,6 +775,13 @@
                     that.dataSource.change(that);
                 }    
                 
+                if (this.dataSource.validOptions){
+                    const validOptions = this.dataSource.validOptions;
+                    validOptions(this);
+                    this.checkRequired();
+                }
+
+                
                 this.htmlElements.list.find(`[data-index = ${this.index}]`)[0].classList.add(`klevis-select-list--selected`);
                 setTimeout(() => {
                     that.htmlElements.itemSelected.scrollIntoView({block: "center", behavior: "smooth"});
@@ -696,9 +790,7 @@
         }
 
         get dataItem(){
-        
             return this._dataItem;
-        
         }
 
         get selected(){
@@ -707,6 +799,68 @@
 
         get length(){
             return this._length;
+        }
+
+        checkRequired(){
+            //required
+            if (this.dataSource.required ){
+
+                this.htmlElements.selectListDiv.classList.add('klevis-select-list-valid');
+                this.htmlElements.selectListDiv.classList.remove('klevis-select-list-success');
+
+                this.htmlElements.label.classList.add('klevis-select-list-label-valid');
+                this.htmlElements.label.classList.remove('klevis-select-list-label-success');
+
+                this.imageControl = 'klevisSelectList/img/error.png';
+
+                if (!this.htmlElements.valid){
+                    this.htmlElements.selectListContent.append(`<div class = 'klevis-select-list-valid--div'>
+                        <span class="klevis-select-list-valid--div-text"></span>
+                    </div>`)
+                }
+                
+                //valid text
+                if (this.dataSource.validText){
+                
+                    if (this.dataSource.lang){
+                    
+                        if (typeof(this.dataSource.validText)  === 'object' ){
+                        
+                            if (this.dataSource.validText[this.dataSource.lang]){
+                                this.validTextHtml = this.dataSource.validText[this.dataSource.lang];   
+                            } else {
+                                this.validTextHtml = this.dataSource.validText[Object.keys(this.dataSource.label)[0]];
+                            }
+                        
+                        } else {
+                                this.validTextHtml = this.dataSource.validText
+                        }
+                    
+                    } else {
+                    
+                        if (typeof(this.dataSource.validText)  === 'object' ){
+                            this.validTextHtml = this.dataSource.validText[Object.keys(this.dataSource.validText)[0]];
+                        } else {
+                            this.validTextHtml = this.dataSource.validText;
+                        }
+                    
+                    }
+                
+                } else {
+                    this.validTextHtml = this.dataSource.default.validText;
+                }
+            } else {
+                
+                this.htmlElements.selectListDiv.classList.remove('klevis-select-list-valid');
+                this.htmlElements.selectListDiv.classList.add('klevis-select-list-success');
+                
+                this.htmlElements.label.classList.remove('klevis-select-list-label-valid');
+                this.htmlElements.label.classList.add('klevis-select-list-label-success');
+
+                this.htmlElements.destroyRequired();
+                this.imageControl = 'klevisSelectList/img/success.png';
+
+            }
         }
 
         open(){
@@ -732,6 +886,7 @@
             this.htmlElements.menu.classList.add('klevis-select-list--close');
             this.state = 'close';
             this.htmlElements.imageArrow.src = 'klevisSelectList/img/arrow-down.png';
+
         
         }
 
@@ -778,7 +933,8 @@
 
     $.fn.klevisSelectList.defaultData = {
         label: '&nbsp;',
-        type: 'number'
+        type: 'number',
+        displayImageControl: true
     };
 
 }));
