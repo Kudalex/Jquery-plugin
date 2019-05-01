@@ -189,7 +189,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 	//https://myjson.com
 	$('.testSelectList1').klevisSelectList({
-		label: 'Select',
+		label: 'Select 1',
 		textField: 'name',
 		valueField: 'abbreviation',
 		nullOption: true,
@@ -238,5 +238,49 @@ document.addEventListener('DOMContentLoaded', function () {
 		}
 
 	})
+
+	
+	$('.testSelectList2').klevisSelectList({
+		label: 'Select 2',
+		textField: 'name',
+		valueField: 'abbreviation',
+		filter: true,
+		displayImageControl: false,
+		source: {
+			items : [{
+				name: 'test323',
+				abbreviation: '1'
+			}, {
+				name: 'test123',
+				abbreviation: '2'
+			}, {
+				name: 'test45',
+				abbreviation: '3'
+			}]
+		},
+
+	})
+	
+	$('.testMultiSelectList1').klevisMultiSelectList({
+		label: 'Multi Select 1',
+		textField: 'name',
+		valueField: 'abbreviation',
+		filter: true,
+		displayImageControl: false,
+		source: {
+			items : [{
+				name: 'test323',
+				abbreviation: '1'
+			}, {
+				name: 'test123',
+				abbreviation: '2'
+			}, {
+				name: 'test45',
+				abbreviation: '3'
+			}]
+		},
+
+	})
+
 
 }, false);
