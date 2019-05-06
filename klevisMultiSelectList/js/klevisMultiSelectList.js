@@ -638,7 +638,7 @@
             //return this.dataSource.items.filter(item => { return item[this.dataSource.textField] == value; });
             return this.dataSource.items.filter(
                 item => Object.keys(item).some(
-                    key => item[key].toLowerCase().includes(value.toLowerCase())
+                    key => ((item[key]).toString()).toLowerCase().includes(value.toLowerCase())
                 )
             );
         }

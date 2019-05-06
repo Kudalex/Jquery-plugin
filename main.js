@@ -248,7 +248,7 @@ document.addEventListener('DOMContentLoaded', function () {
 		displayImageControl: false,
 		source: {
 			items : [{
-				name: 'test323',
+				name: "test323",
 				abbreviation: '1'
 			}, {
 				name: 'test123',
@@ -260,7 +260,28 @@ document.addEventListener('DOMContentLoaded', function () {
 		},
 
 	})
+
 	
+	$('.testSelectList3').klevisSelectList({
+		label: 'Select Manufactures MySql',
+		textField: 'description',
+		valueField: 'matchcode',
+		filter: true,
+		nullOption: true,
+		autoRead: false,
+		source: {
+			transport(options){
+				$.ajax({
+					type: "GET",
+					url: "https://api.myjson.com/bins/xmrxw",
+					success: (data) => {
+						options.success(data);
+					}
+				});
+			}
+		}
+	})
+
 	$('.testMultiSelectList1').klevisMultiSelectList({
 		label: 'Multi Select 1',
 		textField: 'name',
@@ -269,13 +290,13 @@ document.addEventListener('DOMContentLoaded', function () {
 		displayImageControl: false,
 		source: {
 			items : [{
-				name: 'test323',
+				name: 'TEST323',
 				abbreviation: '1'
 			}, {
-				name: 'test123',
+				name: 'TEST123',
 				abbreviation: '2'
 			}, {
-				name: 'test45',
+				name: 'TEST45',
 				abbreviation: '3'
 			}]
 		},
