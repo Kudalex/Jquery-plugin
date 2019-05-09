@@ -1,0 +1,157 @@
+  
+  .klevis-list-view-content{
+    outline: none;
+    background: #f3f3f3;
+    border: 1px solid #e8e8e8;
+    padding: 4px;
+  }
+
+  .klevis-list-view--filter{
+    padding: 1px;
+  }
+  
+  .klevis-list-view--head-group{
+    background: #d9d9d991;
+    color: black;
+    position: relative;
+  }
+
+  .klevis-list-view--menu-group {
+    background: #fcfcfc;
+  }
+
+  .klevis-list-view--menu{
+    display: grid;  
+    grid-gap: 5px;
+    /*grid-template-columns: 1fr 1fr 1fr 1fr;*/
+  }
+
+  .klevis-list-view--container-group{
+    display: grid;  
+    grid-gap: 5px;
+    /*grid-template-columns: 1fr 1fr 1fr 1fr;*/
+  }
+
+  .klevis-list-view--menu-item{
+    cursor: pointer;
+    color: grey;
+    font-weight: normal;
+    transition: 0.7s ease all;
+    -moz-transition: 0.7s ease all;
+    -webkit-transition: 0.7s ease all;
+  }
+
+  .klevis-list-view--selected{
+    background: #c1c1c1;
+    border: 1px solid #888888;
+    border-radius: 5%;
+    cursor: pointer;
+    color: black;
+  }
+  
+  .klevis-list-view--selected:hover {
+    background: #46464691 !important;
+    cursor: pointer;
+    color: white !important;
+  }
+
+  .klevis-list-view--menu-item:hover{
+    background: #d9d9d991;
+    color: black;
+  }
+
+  .klevis-list-view--group-name{
+    position: relative;
+    top: 2px;
+    left: 4px;
+    color: gray;
+    font-weight: normal;
+  }
+
+  .klevis-list-view-image-content{
+    float: right;
+  } 
+  
+  .klevis-list-view-image-hide{
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    position: relative;
+    top: 2px;
+    right: 4px;
+}
+
+.klevis-list-view--label{
+    color: grey;
+    font-weight: normal;
+    transition: 0.7s ease all;
+    -moz-transition: 0.7s ease all;
+    -webkit-transition: 0.7s ease all;
+}
+
+.klevis-list-view--paginator-container{
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  background: #e4e4e4;
+  position: relative;
+}
+
+.klevis-list-view--paginator{
+  color: gray;
+  float: right;
+}
+
+.klevis-list-view-loading{
+  grid-column: 1;
+  grid-row: 1;
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  position: relative;
+  left: 4px;
+}
+
+
+.klevis-list-view-read{
+  -webkit-animation:klevis-select-list-spin 1s linear infinite;
+  -moz-animation:klevis-select-list-spin 1s linear infinite;
+  animation:klevis-select-list-spin 1s linear infinite;
+}
+
+@-moz-keyframes klevis-select-list-spin { 100% { -moz-transform: rotate(360deg); } }
+@-webkit-keyframes klevis-select-list-spin { 100% { -webkit-transform: rotate(360deg); } }
+@keyframes klevis-select-list-spin { 100% { -webkit-transform: rotate(360deg); transform:rotate(360deg); } }
+
+.klevis-list-view--selected-container{
+  display: grid;
+  overflow-wrap: break-word;
+  padding: 5px;
+  grid-gap: 1px;
+  position: relative;
+  top: -10px;
+}
+
+.klevis-list-view--selected-item{
+  background: #c1c1c1;
+  border: 1px solid #888888;
+  border-radius: 5%;
+  font-weight: normal;
+  transition: 0.7s ease all;
+  -moz-transition: 0.7s ease all;
+  -webkit-transition: 0.7s ease all;
+}
+
+.klevis-list-view--selected-item:hover{
+  background: #919292;
+  color: white;
+  cursor: pointer;
+}
+
+.klevis-list-view--selected-item-delete{
+    right: 2px;
+    float: right;
+    width: 12px;
+    height: 12px;
+    position: relative;
+    top: 3px;
+}
