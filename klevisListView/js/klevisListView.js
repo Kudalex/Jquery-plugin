@@ -691,6 +691,65 @@
                     })
                 })
 
+                this.selected.map((item, index) => {
+                    if (that.htmlElements.menu.find(`[value = ${item[that.dataSource.valueField]}]`)[0]){
+                        that.htmlElements.menu.find(`[value = ${item[that.dataSource.valueField]}]`)[0].classList.add(`klevis-list-view--selected`);
+                        
+                        let deleteLink = `<img value = '${item[that.dataSource.valueField]}' src = 'klevisListView/img/close.png' class = 'klevis-list-view--selected-item-delete'></img>`;
+
+                        this.htmlElements.menu.find(`[value = ${item[that.dataSource.valueField]}]`).append(deleteLink);
+    
+                        function removeSelectedItem(e){
+
+                            let target = $(e.target)["0"],
+                                value = target.getAttribute('value');
+    
+                            that.selected.splice(that._findSelectedItemByValue(value), 1);
+    
+                            that.htmlElements.menu.find(`[value = ${value}]`)[0].removeEventListener('click', removeSelectedItem)
+                            that.htmlElements.menu.find(`[value = ${value}]`)[0].classList.remove(`klevis-list-view--selected`);
+    
+                            that.htmlElements.selectedDelete.map((index, item) => {
+                                if (item.getAttribute('value') == value){
+                                    item.remove()
+                                }
+                            })
+                            
+                            that.htmlElements.selectedItem.map((index, item) => {
+                                if (item.getAttribute('value') == value){
+                                    item.remove()
+                                }
+                            })
+    
+                        }
+                        this.htmlElements.menu.find(`[value = ${item[that.dataSource.valueField]}]`)[0].addEventListener('click', removeSelectedItem)
+    
+                        function removeSelectedItemContainer(e){
+                            let target = $(e.target)["0"],
+                                value = target.getAttribute('value');
+    
+                                that.selected.splice(that._findSelectedItemByValue(value), 1);
+                                
+                                that.htmlElements.menu.find(`[value = ${value}]`)[0].removeEventListener('click', removeSelectedItem)
+                                that.htmlElements.menu.find(`[value = ${value}]`)[0].classList.remove(`klevis-list-view--selected`);
+                                
+                                that.htmlElements.selectedDelete.map((index, item) => {
+                                    if (item.getAttribute('value') == value){
+                                        item.remove()
+                                    }
+                                })
+                                
+                                that.htmlElements.selectedItem.map((index, item) => {
+                                    if (item.getAttribute('value') == value){
+                                        item.remove()
+                                    }
+                                })
+                        }
+    
+                        this.htmlElements.selectedContainer.find(`[value = ${item[that.dataSource.valueField]}]`)[0].addEventListener('click', removeSelectedItemContainer)
+                    }
+                })
+
                 this._initNumColls(this._colls);
             }
         }
